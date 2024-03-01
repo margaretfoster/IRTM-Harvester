@@ -1,2 +1,2 @@
 # IRTM-Harvester
-Repository for IRTM to aggregate survey insights
+This project describes how to use the [IRT-M Package](https://github.com/dasiegel/IRT-M) as a tool to aggregate surveys.
