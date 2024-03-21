@@ -1,0 +1,18 @@
+
+## All results:
+*.pdf
+*.png
+
+## All IDE and R temporary files:
+
+*.Rproj.user
+*.Rhistory
+
+*.Ruserdata
+*.DS_Store
+
+## Data files:
+*.*data # Rdata or rdata
+*.*ds #Rds or rds
+*.txt
+*.csv
