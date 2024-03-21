@@ -3,7 +3,6 @@
 ## for all countries
 ##############################
 
-##renv::init()-- can't create version control b/c IRTM is not yet on CRAN
 
 rm(list=ls())
 ## Declare paths:
@@ -14,6 +13,21 @@ setwd("~/Dropbox/IRTM-Harvester/")
 
 dataPath2 <- "./Afrobarometer-data/" ## raw data
 irtmPath <- "./code/" ## for IRM code
+
+## Groundhog code for the package libraries:
+library(groundhog)
+
+packs <- c("tidyverse", "ggmap",
+           "ggplot2", "maps",
+           #"rgdal",
+           "viridis",
+           'pscl', "MASS", "boot", ## for Zero-inflated negative binomial
+           "lmtest", "sandwich", "broom") ## for clustered standard errors
+
+groundhog_day <- "2023-09-01" ##
+
+groundhog.library(packs, groundhog_day)
+
 
 ##%%%%%%%%%%%%%%%%%%%%%%
 ## Part One:
@@ -38,7 +52,7 @@ source("master_ensemble.R")
 
 source("LambdasDistribution.R")
 ## In: Lambda and M-matrices created by IRTM
-## Out: Dataframe of lambda loadings per specified theta 
+## Out: Data frame of lambda loadings per specified theta 
 
 
 ## This script directs to run_[country]_R[round].R scripts
