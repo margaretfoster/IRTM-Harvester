@@ -28,6 +28,9 @@ groundhog_day <- "2023-09-01" ##
 
 groundhog.library(packs, groundhog_day)
 
+## Caveat at the top:
+## This codebase is designed to be readable rather than elegant
+## e.g. the vizualiation scripts could be more abstracted
 
 ##%%%%%%%%%%%%%%%%%%%%%%
 ## Part One:
@@ -58,6 +61,7 @@ source("LambdasDistribution.R")
 ## This script directs to run_[country]_R[round].R scripts
 ## To customize the countries that are running, comment out
 ## the "countries" line in master_file
+
 ##%%%%%%%%%%%%%%%%%%%%%%
 ## Part Two: Visualization and Analysis
 ##%%%%%%%%%%%%%%%%%%%%%%
@@ -71,10 +75,44 @@ source("AssembleGridYearThetas.R") ## Attach thetas to PRIO Grid
 ## out: all_df.Rds (all theta estimates, unit is respondent)
 ## out: gridyear_Thetas.Rds: unit is PRIO-grid year, summary statistics of thetas
 
-## Ensemble plot:
+## Distributions of all Theta 1 by country and round:
 source("allViz.R")
 ## out: plot of all countries (y-axis) and distribution of theta(s)
 
+## Illustrate within-country
+## Via Theta 1 in Algeria according to Urban/Rural
+source("sub_country_spotlight.R")
+
+## Uganda Case Study:
+## Scripts produce b/w plots for region and ethnic group.
+## Each script for one round of AB analysis
+source(UgandaR4VizBW.R)
+source(UgandaR5VizBW.R)
+source(UgandaR6VizBW.R)
+
+
+## Nigeria Case Study:
+## Scripts produce b/w plots for region and ethnic group.
+## Each script for one round of AB analysis
+source(NigeriaR4VizBW.R)
+source(NigeriaR5VizBW.R)
+source(NigeriaR6VizBW.R)
+
+## Kenya Case Study:
+## Scripts produce b/w plots for region and ethnic group.
+## Each script for one round of AB analysis
+source(NigeriaR4VizBW.R)
+source(NigeriaR5VizBW.R)
+source(NigeriaR6VizBW.R)
+
+## Intermediate clean-up of the directory:
+source(move_files)
+
+move_files(sourcedir=".",
+           targetdir = "./Images/",
+           ending="png")
+
+## Correlation of thetas and organized/non-organized events
 source("allAnalysis.R") ## Analysis of correlations between Thetas and events
 
 ################
@@ -89,3 +127,4 @@ source("LambdasDistribution.R")
 ##Out: T[N]_LambdaLoadings.Rds, a dataframe of country-AB round question loadings for 
 ## selected Theta dimension.
 
+## Clean up teh 

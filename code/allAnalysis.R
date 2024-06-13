@@ -1,6 +1,6 @@
 rm(list=ls())
 
-## Customize for your maachine:
+## Customize for your machine:
 setwd("/Users/Promachos/Dropbox (Personal)/IRTM-Harvester/code")
 
 #### Load packages:
@@ -63,6 +63,7 @@ state <- c(10, 11, 17)
 ## 40 (sole communal militia action); 44 (communal militia vs communal militia)
 ## 47 (communal militia vs civilians); 48 (communal militia vs other)
 
+#18 
 org_non_state <-  c(12, 13, 14,
                     20, 22, 23, 24, 27, 28, 
                     30, 33, 34, 37, 38, 
@@ -77,12 +78,17 @@ org_non_state <-  c(12, 13, 14,
 ## 50 (sole rioter action); 55 (rioters vs rioters); 56 (rioters vs protesters); 57 (rioters vs civilians)'
 ## 58 (rioters vs others); 60 (sole protester action); 66 (protester vs protesters); 68 (protester vs other)
 
+## 16
 non_org_non_state <- c(15, 16, 
                        25, 26, 
                        35, 36, 
                        45, 46,
-                       50, 55, 56, 57, 58, 
-                       60, 66, 68)
+                       50, 55, 
+                       56, 57,
+                       58, 60, 
+                       66, 68)
+
+
 
 ## Add "Political Violence; Demonstrations" section to "Political violence'"
 
@@ -137,9 +143,9 @@ acled_thetas <- acled_thetas[which(acled_thetas$year > 2007 &
 table(acled_thetas$year)
 
 ## Add in 0s for grid-years without violence or interviews:
-acled_thetas_Lag= expand.grid(
+acled_thetas_Lag = expand.grid(
   grid = sort(unique(acled_thetas$grid)), ## group for index
-  int.round = seq(from = 4, ## Expand the dataframe so that there is a entry for each grid-round
+  int.round = seq(from = 4, ## Expand the dataframe so that there is an entry for each grid-round
                   to = 6)) %>% ## 
   ## merge the scaffold into the data: 
   left_join(acled_thetas, by = c("grid", "int.round")) %>%  ## Add location, event, and theta estimates
@@ -171,6 +177,7 @@ acled_thetas_Lag <- acled_thetas_Lag %>%
 ## unit is year-interaction
 ## with number of events for each of the different 
 ## interaction codes
+
 print(acled_thetas[which(acled_thetas$grid==80317),])
 
 ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -201,9 +208,18 @@ vars <- c("num_events", ## dvs
 ## Expectation: Theta 1 negatively correlated with protests
 ## (Eg: lower Theta 1, higher number of protests)
 
+## "Demonstrations" is the coding for events that involved rioters, protesters
+## vs other entities
 demonstrations <- acled_thetas_Lag %>%
   filter(event_grouping== "non_org_non_state") %>%
   filter(!is.na(T1.quant.25)) ## protests/riots in same year as AB interviews
+
+## "Violence" is the coding for events with groups, millitias:
+
+violence <- acled_thetas_Lag %>%
+  filter(event_grouping== "org_non_state") %>%
+  filter(!is.na(T1.quant.25)) ## protests/riots in same year as AB interviews
+
 
 
 ## Country-level correlations
@@ -334,21 +350,6 @@ v_cors$Correlation <- as.numeric(v_cors$Correlation)
 v_cors$Country <- as.factor(v_cors$Country)
 v_cors$EventType <- as.factor(v_cors$EventType)
 
-## Plot violence correlations
-  v_cors_plot <- ggplot(v_cors,
-                      aes(y= Correlation, 
-                          x=EventType,
-                          fill=Correlation)) +
-   geom_bar(stat="identity", colour="black", show.legend = FALSE) +
-  scale_fill_gradient2(low="lightgray", high="darkgray"", midpoint=0) +
-  labs(x="\n ACLED Event Code",
-       y="Correlation Theta 1 and Frequent Events in ACLED\n") +
-    ggtitle("Correlations Between Average Theta 1 and ACLED Event Types")+
-  theme_bw() +
-  theme(axis.text.x=element_text(angle=45, vjust=0.5))+
-  facet_wrap(~Country,scales = "free")
-
-v_cors_plot
 
 ##
 ## By AB-Round:
@@ -378,6 +379,31 @@ v_cors_2$Country <- as.factor(v_cors_2$Country)
 v_cors_2$Round <- paste0("Round ", v_cors_2$Round)
 v_cors_2$EventType <- as.factor(v_cors_2$EventType)
 
+
+## Overview  plot of violence correlations
+### Plot, wrapped by round:
+v_cors_rounds <- ggplot(v_cors_2,
+                        aes(y= Correlation, 
+                            x=Country,
+                            fill=Correlation)) +
+  geom_bar(stat="identity", colour="black", show.legend = FALSE) +
+  geom_text(aes(label=EventType), size = 2, position = position_stack(vjust = 0.5))+
+  scale_fill_gradient2(low="lightgray", high="darkgray", midpoint=0) +
+  labs(x="\nCountry", y="Correlation Theta 1 and Organized Violence\n") +
+  #ggtitle("Correlations Between Average Theta 1 and ACLED Organized Violence")+
+  theme_bw() +
+  ##theme(axis.text.x=element_text(angle=45, vjust=0.5)) +
+  facet_wrap(~Round, nrow=3)+
+  ##geom_text(aes(label = Freq), vjust = -1)+
+  geom_hline(yintercept=0, linetype='dotted', col = 'gray')+
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))+
+  theme(legend.position="bottom")
+
+v_cors_rounds
+
+ggsave(v_cors_rounds, file="MeanTheta1_Correlations_OrganizedViolence.png")
+
+
 ### Data is too big to put in a single plot:
 ## Events 60 [protests], 37 [militia vs civilians], 13 [military vs militia],
 ## 15 [military vs rioters], 12 [military vs rebels] are the highest
@@ -388,7 +414,7 @@ v_cors_p3 <- ggplot(v_cors_2[which(v_cors_2$EventType==event_focus),],
                           x= Country,
                           fill=Correlation)) +
   geom_bar(stat="identity", colour="black", show.legend = FALSE) +
-  scale_fill_gradient2(high="lightgray", low="darkgray"", midpoint=0) +
+  scale_fill_gradient2(high="lightgray", low="darkgray", midpoint=0) +
   labs(x="\nCountry", 
        y=paste0("Kendall Correlation Theta 1 and ACLED Event ", event_focus, "\n")) +
   ggtitle(paste0("Correlations Theta 1 and ACLED Event ", event_focus, "\n"))+
@@ -399,16 +425,19 @@ v_cors_p3 <- ggplot(v_cors_2[which(v_cors_2$EventType==event_focus),],
 
 v_cors_p3
 
-library(plotly)
 
+
+
+### Heatmap for specific types of events
+## (y-axis; though this should be an interactive dashboard)
 v_cors_p2 <- ggplot(v_cors_2,
                     aes(y= EventType, 
                         x= Country,
                         fill=Correlation)) +
   geom_tile() +
-  scale_fill_gradient2(high="lightgray", low="darkgray"", midpoint=0) +
+  scale_fill_gradient2(low="white", high="darkgray", midpoint=0) +
   labs(x="\nCountry", 
-       y=paste0("Kendall Correlation Theta 1 and ACLED Events\n")) +
+      y=paste0("Kendall Correlation Theta 1 and ACLED Events\n")) +
   ggtitle("Correlations Theta 1 and ACLED Events")+
   theme_bw() +
   theme(axis.text.x=element_text(angle=45, vjust=0.5)) +
@@ -416,15 +445,15 @@ v_cors_p2 <- ggplot(v_cors_2,
   theme(legend.position="bottom")
 
 v_cors_p2
-
-ggplotly(v_cors_p2, tooltip="text")
-
-
-##ggsave(v_cors_p2, file="MeanTheta1_violence_cors_byr.png")
+#ggsave(v_cors_p2, file="MeanTheta1_Correlations_Different_Events.png")
 
 
+## Interactive:
+## commented out b/c prepping for manuscript
+#library(plotly)
+#ggplotly(v_cors_p2, tooltip="text")
 
-ggsave(v_cors_p2, file="MeanTheta1_violence_cors_byr.png")
+
 
 ### Correlation between violence and Theta 1 lower quartile:
 
