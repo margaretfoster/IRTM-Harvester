@@ -1,11 +1,10 @@
-move_png_files <- function(source_dir, targetdir, ending) {
+move_files <- function(source_dir, target_dir, ending) {
   # Check if source directory exists
   if (!file.exists(source_dir)) {
     stop("Source directory does not exist.")
   }
   
   # Create target directory if it doesn't exist
-  target_dir <- targetdir
   if (!file.exists(target_dir)) {
     dir.create(target_dir)
   }
@@ -16,5 +15,5 @@ move_png_files <- function(source_dir, targetdir, ending) {
   # Move PNG files to target directory
   file.copy(png_files, target_dir, overwrite = TRUE)
   
-  cat(paste0(ending, " files moved successfully to",  targetdir, "directory.\n"))
+  cat(paste0(ending, " files moved successfully to",  target_dir, "directory.\n"))
 }

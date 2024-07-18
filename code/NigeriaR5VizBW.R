@@ -142,9 +142,9 @@ geoThetasR5 <- ABThetasR5[,writeout]
 geoThetasR5$country <- "Nigeria"
 geoThetasR5$round <- 5
 
-#save(geoThetasR5,
- #    file=paste0(dataPath,
-#                 "NigeriaR5geolocatedThetas.Rdata" ))
+save(geoThetasR5,
+    file=paste0(dataPath,
+                 "NigeriaR5geolocatedThetas.Rdata" ))
 
 
 ################################

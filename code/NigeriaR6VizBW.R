@@ -42,7 +42,7 @@ abdata <- "../Afrobarometer-data/"
 
 load(paste0(abdata, "dfWithABEthnicGroupsR6.Rdata")) ## Loads a 466 x 2 df with names
 
-regions <- read_csv(paste0(abdata, "Data/NigeriaRegionsKey.csv")) ## loads a small csv with names of
+regions <- read.csv(paste0(abdata, "Data/NigeriaRegionsKey.csv")) ## loads a small csv with names of
 ## Nigeria's regions and their AB codes for each of the AB rounds
 
 load(paste0(dataPath, "NigeriaNigeria_R6_direct_THETA.RData")) ## Thetas
@@ -102,7 +102,7 @@ egsummary <-as.data.frame(table(ABThetasR6$V2))
 colnames(egsummary) <- c("groupname", "R6Freq")
 ##save(egsummary, file="NigeriaR6egsummary.Rdata")
 
-## not using all.x=TRUE, because that getes four rows with an ethnic group
+## not using all.x=TRUE, because that gets four rows with an ethnic group
 ## code of "17", which is not a code that the AB used, so seems like a transcription error or junk data.
 ## Easier to remove it now than to excise it later
 
@@ -127,6 +127,7 @@ ABThetasR6$groupname <- as.factor(ABThetasR6$groupname)
 
 #########################
 ## Write out geolocated Thetas
+## (commented for replication)
 
 writeout <- c("dateintr", "latitude", "longitude", "urbrur",
               "ABName", "Zones", "Divide", 
@@ -141,7 +142,7 @@ head(geoThetasR6$dateintr) ## Character in format day-abrev month- yy
 geoThetasR6$dateintr <- as.Date(geoThetasR6$dateintr, format = "%d-%b-%y")
 
 #save(geoThetasR6,
-#     file=paste0(dataPath,
+#    file=paste0(dataPath,
 #                 "NigeriaR6geolocatedThetas.Rdata" ))
 
 

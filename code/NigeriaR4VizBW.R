@@ -41,7 +41,7 @@ abdata <- "../Afrobarometer-data/"
 
 load(paste0(abdata, "dfWithABEthnicGroupsR4.Rdata")) ## Loads a 466 x 2 df with names
 
-regions <- read_csv(paste0(abdata, "Data/NigeriaRegionsKey.csv")) ## loads a small csv with names of
+regions <- read.csv(paste0(abdata, "Data/NigeriaRegionsKey.csv")) ## loads a small csv with names of
 ## Nigeria's regions and their AB codes for each of the AB rounds
 
 load(paste0(dataPath, "NigeriaNigeria_R4_direct_THETA.RData")) ## Thetas
@@ -156,9 +156,9 @@ geoThetasR4 <- ABThetasR4[,writeout]
 geoThetasR4$country <- "Nigeria"
 geoThetasR4$round <- 4
 
-#save(geoThetasR4,
-#     file=paste0(dataPath,
-#                 "NigeriaR4geolocatedThetas.Rdata" ))
+save(geoThetasR4,
+     file=paste0(dataPath,
+                 "NigeriaR4geolocatedThetas.Rdata" ))
 
 #####################
 ## plotting
