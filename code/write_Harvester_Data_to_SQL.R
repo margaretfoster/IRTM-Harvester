@@ -6,7 +6,7 @@
 ## 1) Ingests .Rdata objects with Afrobarometer survey and
 ## Geolocated Thetas for each country - round.
 ## 2) Creates a primary key for the row, based on row number and country-round
-## (b/c structure of the dfs is thateach row of survey and Thetas object for a given 
+## (b/c structure of the dfs is that each row of survey and Thetas object for a given 
 ## country-round are assumed to be the same survey respondent)
 ## 3) Writes the data table to the SQL server
 
@@ -20,12 +20,6 @@ packs <- c("DBI", ## Database interface package
            "RPostgreSQL",  
            "getPass") ## works like readline(),but masks input
 
-## Load packages"
-#library(groundhog) ## better for version control
-
-#groundhog.library(packs,  #having trouble with groundhog and odbc
-#                  include.suggests = TRUE, 
-#                  "2024-06-15", tolerate.R.version='4.3.3')
 
 loadPkg=function(toLoad){
   for(lib in toLoad){
@@ -43,15 +37,15 @@ loadPkg(packs)
 
 drv <- dbDriver("PostgreSQL")
 
-port = 5432
+port = 5433 #Or the port you use!
 db = "harvesterab"
 
-## username = 'Promachos'
-## configured for general system user, so don't need DB pw:
+## The following connection is configured for the system user, so don't need DB pw.
+
+## But if I did, we'd want to make sure that we didn't store them in plain text:
+
 #username = readline(prompt = "Enter username: ")
-
 #password = rstudioapi::askForPassword("Database password")
-
 
 
 con <- dbConnect(drv, 
@@ -61,7 +55,7 @@ con <- dbConnect(drv,
                  user = username) 
 #password = password)
 
-con ## PostgresSQL connection
+con ## PostgreSQL connection
 
 dbListTables(con) ## so far nothing in the connection
 
@@ -75,28 +69,6 @@ dataPath <- "./Code_All_Countries/"## THETAS
 
 thetasPath  <-"./Results/"
 abdata <- "../Afrobarometer-data/"
-
-## Generalized data:
-
-#load(paste0(abdata, "dfWithABEthnicGroupsR6.Rdata")) ## Loads a 466 x 2 df with names
-#regions <- read.csv(paste0(abdata, "Data/NigeriaRegionsKey.csv")) ## loads a small csv with names of
-## Nigeria's regions and their AB codes for each of the AB rounds
-
-#DBI::dbWriteTable(value = AB.ethnic.groups,
-#                  conn= con,
-#                  name="ab_ethnic_group_codes")
-
-#rm(AB.ethnic.groups)
-
-#DBI::dbWriteTable(value = regions,
-#                  conn= con,
-#                  name="ab_region_key")
-
-#rm(regions)
-
-## Nigeria:
-
-
 
 ## Function to create a primary key
 ##  (from round and country)
@@ -265,5 +237,4 @@ DBI::dbWriteTable(value = lambda_t1,
 
 dbListTables(con)
 
-
-dbDisconnect(con)
+dbDisconnect(con) ## This is important!!
